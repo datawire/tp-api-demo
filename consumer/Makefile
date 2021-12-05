@@ -2,18 +2,23 @@
 MAKEFLAGS += --no-builtin-rules
 TELEPRESENCE_REGISTRY ?= docker.io/datawire
 
-.DEFAULT_GOAL := push-image
+.DEFAULT_GOAL := target/deploy.ts
 
-.PHONY: build
-build: $(wildcard src/**/*)
+target/build.ts: $(wildcard src/**/*)
 	mvn clean package
 	mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+	touch target/build.ts
 
-.PHONY: image
-image: build
+target/image.ts: target/build.ts
 	DOCKER_BUILDKIT=1 docker build --tag tp-api-demo-consumer .
 	docker tag tp-api-demo-consumer:latest $(TELEPRESENCE_REGISTRY)/tp-api-demo-consumer
+	touch target/image.ts
 
-.PHONY: push-image
-push-image: image
+target/push-image.ts: target/image.ts
 	docker push $(TELEPRESENCE_REGISTRY)/tp-api-demo-consumer
+	touch target/push-image.ts
+
+target/deploy.ts: target/push-image.ts
+	kubectl delete -f k8s || true
+	kubectl apply -f k8s
+	touch target/deploy.ts

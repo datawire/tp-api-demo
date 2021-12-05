@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.datawire</groupId>
-    <artifactId>tp-api-demo</artifactId>
+    <artifactId>tp-api-demo-producer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>tp-api-demo-producer</name>
     <description>Demo producer for Telepresence API Service</description>

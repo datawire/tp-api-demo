@@ -22,24 +22,20 @@ import java.util.Map;
 
 @RestController
 public class Controller {
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
-    @Value("${app.topic.demo}")
-    private String topicDemo;
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+	private static final Logger log = LoggerFactory.getLogger(Controller.class);
+	@Autowired
+	private KafkaTemplate<String,String> kafkaTemplate;
+	@Value("${app.topic.demo}")
+	private String topicDemo;
 
-    @PostMapping("/send/{name}")
-    ResponseEntity<String> listHeaders(@RequestHeader Map<String, String> rqHeaders, @PathVariable String name) {
-        List<Header> headers = new ArrayList<>(rqHeaders.size());
-        rqHeaders.forEach((key, value) -> {
-            log.info("{}: {}", key, value);
-            headers.add(new RecordHeader(key, value.getBytes(StandardCharsets.UTF_8)));
-        });
-
-        ProducerRecord<String, String> record = new ProducerRecord<>(topicDemo, null, name, "some payload", headers);
-        kafkaTemplate.send(record);
-
-        return new ResponseEntity<String>(
-                String.format("Listed %d headers", headers.size()), HttpStatus.OK);
-    }
+	@PostMapping("/send/{name}")
+	ResponseEntity<String> sendName(@RequestHeader Map<String,String> rqHeaders, @PathVariable String name) {
+		List<Header> headers = new ArrayList<>(rqHeaders.size());
+		rqHeaders.forEach((key, value) -> {
+			log.info("{}: {}", key, value);
+			headers.add(new RecordHeader(key, value.getBytes(StandardCharsets.UTF_8)));
+		});
+		kafkaTemplate.send(new ProducerRecord<>(topicDemo, null, "name", name, headers));
+		return new ResponseEntity<String>(String.format("Copied %d headers", headers.size()), HttpStatus.OK);
+	}
 }

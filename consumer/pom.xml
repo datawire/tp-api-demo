@@ -11,7 +11,7 @@
     <groupId>io.datawire</groupId>
     <artifactId>tp-api-demo-consumer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tp-api-demo</name>
+    <name>tp-api-demo-consumer</name>
     <description>Demo consumer for Telepresence API Service</description>
     <properties>
         <java.version>11</java.version>
